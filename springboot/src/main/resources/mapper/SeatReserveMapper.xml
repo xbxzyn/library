@@ -1,0 +1,88 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.SeatReserveMapper">
+
+    <select id="selectAll" resultType="com.example.entity.SeatReserve">
+        select seat_reserve.*, room.name as roomName, seat.no as seatNo, user.username as userName from `seat_reserve`
+        left join seat on seat_reserve.seat_id = seat.id
+        left join user on seat_reserve.user_id = user.id
+        left join room on seat.room_id = room.id
+        <where>
+            <if test="roomName != null"> and room.name like concat('%', #{roomName}, '%')</if>
+            <if test="seatNo != null"> and seat.no= #{seatNo}</if>
+            <if test="userId != null"> and seat_reserve.user_id= #{userId}</if>
+            <if test="yydate != null"> and seat_reserve.yydate= #{yydate}</if>
+
+        </where>
+        order by seat_reserve.id desc
+    </select>
+
+    <select id="selectYqlist" resultType="com.example.entity.SeatReserve">
+        SELECT
+        sr.*
+        FROM
+        seat_reserve sr
+        WHERE
+        sr.status = '已选'
+        AND sr.yydate = CURDATE()
+        AND STR_TO_DATE(TRIM(sr.jssj), '%H:%i') = CURTIME()
+        ORDER BY
+        sr.id DESC;
+    </select>
+
+    <select id="findSeat" resultType="com.example.entity.SeatReserve">
+        select * from seat_reserve where seat_id =  #{seatId} and yydate = #{yydate} and( kssj >= #{kssj} or jssj >= #{jssj}) and status ='已选'
+    </select>
+
+    <delete id="deleteById">
+        delete from `seat_reserve`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.SeatReserve" useGeneratedKeys="true">
+        insert into `seat_reserve`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="seatId != null">seat_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="time != null">time,</if>
+            <if test="status != null">status,</if>
+            <if test="yydate != null">yydate,</if>
+            <if test="kssj != null">kssj,</if>
+            <if test="jssj != null">jssj,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="seatId != null">#{seatId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="status != null">#{status},</if>
+            <if test="yydate != null">#{yydate},</if>
+            <if test="kssj != null">#{kssj},</if>
+            <if test="jssj != null">#{jssj},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.SeatReserve">
+        update `seat_reserve`
+        <set>
+            <if test="seatId != null">
+                seat_id = #{seatId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+</mapper>

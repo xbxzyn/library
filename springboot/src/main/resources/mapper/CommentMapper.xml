@@ -1,0 +1,107 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CommentMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Comment">
+        SELECT
+        comment.*,
+        user.username AS userName,
+        CASE
+        WHEN comment.module = 'book' THEN book.name
+        WHEN comment.module = 'posts' THEN posts.title
+        ELSE NULL
+        END AS bookName
+        FROM `comment`
+        LEFT JOIN user ON comment.user_id = user.id
+        LEFT JOIN book ON comment.fid = book.id AND comment.module = 'book'
+        LEFT JOIN posts ON comment.fid = posts.id AND comment.module = 'posts'
+        <where>
+            <if test="content != null"> AND comment.content LIKE CONCAT('%', #{content}, '%') </if>
+            <if test="userId != null"> AND comment.user_id = #{userId} </if>
+            <if test="module != null"> AND comment.module = #{module} </if>
+        </where>
+        ORDER BY comment.id DESC
+    </select>
+
+    <select id="selectByModuleAndFid" resultType="com.example.entity.Comment">
+        select comment.*, user.username as userName, user.avatar as userAvatar,book.name bookName from `comment`
+        left join user on comment.user_id = user.id
+        left join book on comment.fid = book.id
+        <where>
+            <if test="module != null"> and comment.module = #{module}</if>
+            <if test="fid != null"> and comment.fid = #{fid}</if>
+            and comment.pid is null
+        </where>
+        order by comment.id desc
+    </select>
+
+    <!--  查询父节点的评论人的名称  -->
+    <select id="selectByRootId" resultType="com.example.entity.Comment">
+        <!--  查询父节点的评论人的名称  -->
+        select c1.*, u1.username as userName, u1.avatar as userAvatar, u2.name as parentUserName from `comment` c1
+        left join user u1 on c1.user_id = u1.id
+        left join comment c2 on c1.pid = c2.id
+        left join user u2 on c2.user_id = u2.id
+        where c1.pid is not null and c1.root_id = #{rootId}
+        order by c1.id desc
+    </select>
+
+    <delete id="deleteById">
+        delete from `comment`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Comment" keyProperty="id" useGeneratedKeys="true">
+        insert into comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="content != null">content,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="pid != null">pid,</if>
+            <if test="time != null">time,</if>
+            <if test="fid != null">fid,</if>
+            <if test="module != null">module,</if>
+            <if test="rootId != null">root_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="content != null">#{content},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="pid != null">#{pid},</if>
+            <if test="time != null">#{time},</if>
+            <if test="fid != null">#{fid},</if>
+            <if test="module != null">#{module},</if>
+            <if test="rootId != null">#{rootId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Comment">
+        update comment
+        <set>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="pid != null">
+                pid = #{pid},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="fid != null">
+                fid = #{fid},
+            </if>
+            <if test="module != null">
+                module = #{module},
+            </if>
+            <if test="rootId != null">
+                root_id = #{rootId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,81 @@
+.front-notice {
+    padding: 5px 20px;
+    color: #666;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.front-header {
+    display: flex;
+    height: 60px;
+    line-height: 60px;
+    background-color: #93c8f4;
+    border-bottom: 1px solid #93c8f4;
+}
+
+.front-header-left {
+    width: 350px;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+}
+
+.front-header-left img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.front-header-left .title {
+    color: #333;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none !important;
+}
+
+.front-header-center {
+    flex: 1;
+}
+
+.front-header-right {
+    padding-right: 20px;
+}
+
+.main-content {
+    width: 80%;
+    margin: 10px auto;
+}
+.main-body {
+    min-height: calc(100vh - 100px);
+}
+
+:deep(.title) {
+    cursor: pointer;
+    text-align: justify;
+}
+:deep(.title:hover) {
+    color: #0085fd;
+    text-decoration: underline;
+}
+
+/*Element-Plus样式覆盖*/
+.el-menu--horizontal {
+    border: none !important;
+}
+.el-tooltip__trigger {
+    outline: none;
+}
+.el-menu--horizontal {
+    background-color: #93c8f4;
+}
+.el-menu--horizontal .is-active {
+    color: #fff !important;
+    background-color: #1149a9 !important;
+}
+.el-menu-item:not(.is-active):hover {
+    background-color: #5190fb !important;
+    color: white !important;
+}

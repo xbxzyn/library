@@ -1,0 +1,61 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.SeatMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Seat">
+        select seat.*, room.name as roomName from `seat`
+        left join room on seat.room_id = room.id
+        <where>
+            <if test="no != null"> and seat.no like concat('%', #{no}, '%')</if>
+            <if test="roomId != null"> and seat.room_id = #{roomId}</if>
+        </where>
+
+    </select>
+
+    <delete id="deleteById">
+        delete from `seat`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Seat" useGeneratedKeys="true">
+        insert into seat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="no != null">`no`,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="row != null">`row`,</if>
+            <if test="col != null">`col`,</if>
+            <if test="status != null">status,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="no != null">#{no},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="row != null">#{row},</if>
+            <if test="col != null">#{col},</if>
+            <if test="status != null">#{status},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Seat">
+        update seat
+        <set>
+            <if test="no != null">
+                `no` = #{no},
+            </if>
+            <if test="roomId != null">
+                room_id = #{roomId},
+            </if>
+            <if test="row != null">
+                `row` = #{row},
+            </if>
+            <if test="col != null">
+                `col` = #{col},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

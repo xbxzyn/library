@@ -1,0 +1,66 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.MessageMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Message">
+        select message.*,  user.name as userName from `message`
+        left join user on message.user_id = user.id
+        <where>
+            <if test="userId != null"> and message.user_id = #{userId}</if>
+            <if test="content != null"> and message.content like concat('%', #{content}, '%')</if>
+
+        </where>
+        order by message.id desc
+    </select>
+
+    <delete id="deleteById">
+        delete from message
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Message" useGeneratedKeys="true">
+        insert into message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="leixing != null">leixing,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="time != null">time,</if>
+            <if test="content != null">content,</if>
+            <if test="status != null">status,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="leixing != null">#{leixing},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="content != null">#{content},</if>
+            <if test="status != null">#{status},</if>
+
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Message">
+        update message
+        <set>
+            <if test="leixing != null">
+                leixing = #{leixing},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,69 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.SignMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Sign">
+        select sign.*, user.name as userName, activity.name as activityName from `sign`
+        left join activity on sign.activity_id = activity.id
+        left join user on sign.user_id = user.id
+        <where>
+            <if test="activityId != null"> and sign.activity_id = #{activityId}</if>
+            <if test="userId != null"> and sign.user_id = #{userId}</if>
+        </where>
+        order by sign.id desc
+    </select>
+
+    <delete id="deleteById">
+        delete from `sign`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Sign" useGeneratedKeys="true">
+        insert into sign
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="activityId != null">activity_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="time != null">time,</if>
+            <if test="sign != null">sign,</if>
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="sign != null">#{sign},</if>
+            <if test="name != null">#{name},</if>
+            <if test="phone != null">#{phone},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Sign">
+        update sign
+        <set>
+            <if test="activityId != null">
+                activity_id = #{activityId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="sign != null">
+                sign = #{sign},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
